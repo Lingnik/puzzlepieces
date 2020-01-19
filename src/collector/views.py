@@ -21,6 +21,8 @@ import requests
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import mixins, status, viewsets
+from rest_framework.settings import api_settings
+from rest_framework_csv.renderers import CSVRenderer
 
 def hash_my_data(url):
 	url = url.encode("utf-8")
@@ -532,3 +534,14 @@ class TranscriptionDataViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin)
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class ConfidentSolutionViewSet(viewsets.ModelViewSet):
+
+    queryset = ConfidentSolution.objects.all()
+    http_method_names = ['get']
+    serializer_class = ConfidentSolutionSerializer
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (CSVRenderer,)
+
+    def get_queryset(self):
+        return ConfidentSolution.objects.all()
